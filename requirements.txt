@@ -2,9 +2,11 @@
 langgraph==1.2.2                      # builds the agent graph (flight -> hotel -> itinerary -> final agent)
 langchain==1.3.2                      # core LLM framework: messages (SystemMessage, HumanMessage, AIMessage)
 langchain-openai>=1.0,<2              # ChatOpenAI wrapper used by the itinerary and final agents
+ormsgpack==1.12.2                     # langgraph serializer; pinned because Windows Smart App Control blocks the 1.13.0 DLL
 
 # --- Database (conversation memory) ---
-psycopg[binary]==3.3.4                # PostgreSQL driver used to connect to the database
+psycopg[binary]==3.3.4; sys_platform != "win32"  # PostgreSQL driver used to connect to the database (bundled libpq)
+psycopg==3.3.4; sys_platform == "win32"          # on Windows, uses libpq.dll from the PostgreSQL install on PATH (Smart App Control blocks psycopg-binary)
 psycopg_pool==3.3.1                   # PostgreSQL connection pooling (required by the Postgres checkpointer)
 langgraph-checkpoint-postgres==3.1.0  # PostgresSaver: saves each conversation thread's state in PostgreSQL
 
